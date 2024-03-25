@@ -102,13 +102,6 @@
         <div class="centered smol">{getTimestampString($gameCache.timestamp)}</div>
     {/if}
     <div class="buttons centered">
-        <button class="link-button" on:click={() => handleClick(true)}>
-            Copy HTML results
-            {#if isCopyHtmlPopoverOpen}
-                <span class="popover">🍎🦚</span>
-            {/if}
-        </button>
-        |
         <button class="link-button" on:click={() => handleClick()}>
             Copy results
             {#if isCopyPopoverOpen}
