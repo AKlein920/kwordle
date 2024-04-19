@@ -1,9 +1,9 @@
 import { derived, get, readable, writable } from "svelte/store";
 
-import GameCache from "./util/GameCache";
+import type GameCache from "./util/GameCache";
 import GameConfig from "./util/GameConfig";
 import Guess from "./util/Guess";
-import { GuessCharacterColor } from "./util/GuessCharacter";
+import GuessCharacterColor from "./util/GuessCharacterColor";
 
 const _createGuesses = () => {
     const { subscribe, update } = writable(Array.from({ length: 6 }, () => new Guess()));
@@ -31,7 +31,7 @@ const _createGuesses = () => {
 
             return guesses;
         }),
-        submitGuess: () => update(guesses => {
+        submitGuess: (isFromCache = false) => update(guesses => {
             // Because `get(gameConfig)` can return null, save it off in a new variable so we can manually check its
             // nullness and appease the compiler. `isBlocked()` will already do the same thing, but the compiler can't
             // know that.
@@ -48,7 +48,10 @@ const _createGuesses = () => {
                         ""
                     ));
 
-                const newCache = new GameCache(submittedGuesses, get(gameCache).timestamp);
+                const newCache = {
+                    guesses: submittedGuesses,
+                    timestamp: isFromCache ? get(gameCache).timestamp : Date.now(),
+                };
                 gameCache.set(newCache);
                 localStorage.setItem(nullCheckGameConfig.word, JSON.stringify(newCache));
 
@@ -97,8 +100,14 @@ const _createKeyColors = () => {
     };
 };
 
-const _urlParams = new URLSearchParams(window.location.search);
-const _serializedGameConfig = _urlParams.get("f");
+// Using URLSearchParams might seem easier than manually parsing this URL. Unfortunately, URLSearchParams parses the
+// URL, and that includes decoding values. If our Base64 includes a "+", this is bad news. That plus will be decoded as
+// a space. That is *not* valid Base64 and will break when passed into GameConfig.deserialize().
+let _serializedGameConfig: string | null = null;
+if (location.search.length > 3) {
+    // Trim the "?f=" from our search
+    _serializedGameConfig = location.search.substring(3);
+}
 
 export const guesses = _createGuesses();
 export const guessesAreExhausted = derived(guesses, $guesses => $guesses.every(guess => guess.isSubmitted));
@@ -115,8 +124,9 @@ export const nextCharacterIndices = derived(guesses, $guesses => {
 });
 export const gameConfig = readable(_serializedGameConfig === null ? null : GameConfig.deserialize(_serializedGameConfig));
 
-const cache: GameCache = JSON.parse(localStorage.getItem(get(gameConfig)?.word ?? "") ?? "null") ?? new GameCache([]);
-export const gameCache = writable(cache);
+const cache = JSON.parse(localStorage.getItem(get(gameConfig)?.word ?? "") ?? "null")
+    ?? { guesses: [], timestamp: Date.now() };
+export const gameCache = writable<GameCache>(cache);
 
 export const createGameDialogIsVisible = writable(_serializedGameConfig === null);
 export const postGameDialogIsVisible = writable(false);

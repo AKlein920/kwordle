@@ -2,7 +2,7 @@
     import { onDestroy } from "svelte";
 
     import { gameCache, gameConfig, guesses, guessIsCorrect, postGameDialogIsVisible } from "../../stores";
-    import { GuessCharacterColor } from "../../util/GuessCharacter";
+    import GuessCharacterColor from "../../util/GuessCharacterColor";
     import Dialog from "./Dialog.svelte";
 
     let isCopyPopoverOpen = false;
@@ -17,18 +17,18 @@
     onDestroy(unsubscribe);
 
     const monthList = [
-        "Jan.",
-        "Feb.",
-        "Mar.",
-        "Apr.",
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr",
         "May",
-        "Jun.",
-        "Jul.",
-        "Aug.",
-        "Sep.",
-        "Oct.",
-        "Nov.",
-        "Dec.",
+        "Jun",
+        "Jul",
+        "Aug",
+        "Sep",
+        "Oct",
+        "Nov",
+        "Dec",
     ];
 
     const getTimestampString = (timestamp: number) => {

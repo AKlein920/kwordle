@@ -11,7 +11,7 @@
 
     get(gameCache).guesses.forEach(guess => {
         [...guess].forEach(guessCharacter => guesses.addCharacter(guessCharacter));
-        guesses.submitGuess();
+        guesses.submitGuess(true);
     });
 
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -47,6 +47,7 @@
         box-sizing: border-box;
         height: 100%;
         padding: 8px;
+        position: relative;
 
         display: flex;
         align-items: center;

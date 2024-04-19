@@ -12,7 +12,7 @@
 
 {#if $isVisibleStore}
     <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
-    <div on:click={handleClick} on:keypress={handleClick} class="dialog-overlay" role="dialog">
+    <div on:click={handleClick} on:keypress={handleClick} class="scrim" role="dialog">
         <dialog on:click={(event) => event.stopPropagation()} on:keypress={(event) => event.stopPropagation()} open>
             <button on:click={handleClick}>
                 <span class="material-icons">close</span>
@@ -40,7 +40,7 @@
         top: 30%;
     }
 
-    .dialog-overlay {
+    .scrim {
         position: absolute;
         top: 0;
         right: 0;
@@ -51,7 +51,7 @@
     }
 
     @media (prefers-color-scheme: dark) {
-        .dialog-overlay {
+        .scrim {
             background: rgba(0, 0, 0, 0.7);
         }
     }
